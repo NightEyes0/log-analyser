@@ -1,0 +1,8 @@
+[2026-09-17 10:00:01] 10.0.0.15 SUCCESS "Logged in successfully"
+[2026-09-17 10:02:14] 192.168.1.42 FAILED "Invalid password"
+[2026-09-17 10:02:16] 192.168.1.42 FAILED "Invalid password"
+[2026-09-17 10:02:18] 192.168.1.42 FAILED "Invalid password"
+[2026-09-17 10:05:00] 172.16.0.5 SUCCESS "Logged in successfully"
+[2026-09-17 10:08:22] 192.168.1.42 FAILED "Invalid password"
+[2026-09-17 10:12:05] 10.0.0.15 SUCCESS "Session refreshed"
+[2026-09-17 10:14:00] 8.8.8.8 FAILED "User not found"
