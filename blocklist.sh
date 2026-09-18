@@ -9,3 +9,9 @@ iptables -A INPUT -s 195.129.24.210 -j DROP  # Roeselare
 iptables -A INPUT -s 220.117.241.87 -j DROP  # Gwangjin-gu
 iptables -A INPUT -s 150.183.249.110 -j DROP  # Yuseong
 iptables -A INPUT -s 211.214.161.141 -j DROP  # Yongin-si
+iptables -A INPUT -s 82.77.200.128 -j DROP  # Târgu Mureş
+iptables -A INPUT -s 211.137.205.253 -j DROP  # Jinan
+iptables -A INPUT -s 68.143.156.89 -j DROP  # Old Monroe
+iptables -A INPUT -s 202.181.236.180 -j DROP  # Tai Wo Hau
+iptables -A INPUT -s 211.9.58.217 -j DROP  # Tokyo
+iptables -A INPUT -s 207.243.167.114 -j DROP  # Piscataway
