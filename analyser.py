@@ -1,48 +1,47 @@
 import re
-import csv
+import requests
 
-print("--- Log Analysis Started ---\n")
+print("--- Advanced Log Analysis Started ---\n")
 
-log_pattern = r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(SUCCESS|FAILED)"
+#  Download real server logs from the Loghub  dataset
+log_url = "https://raw.githubusercontent.com/logpai/loghub/master/Linux/Linux_2k.log"
+print("Downloading 2,000 real Linux server log lines...")
+log_data = requests.get(log_url).text.splitlines()
+
+#  Regex to find the Attacker's IP in an 'authentication failure' line
+log_pattern = r"authentication failure;.*rhost=(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})"
 failed_logins = {}
 
-with open("server.log", "r") as file:
-    for line in file:
-        match = re.search(log_pattern, line)
-        if match:
-            ip_address = match.group(1)
-            status = match.group(2)
-            
-            if status == "FAILED":
-                if ip_address in failed_logins:
-                    failed_logins[ip_address] += 1
-                else:
-                    failed_logins[ip_address] = 1
+print("Parsing logs for brute-force attacks...")
+for line in log_data:
+    match = re.search(log_pattern, line)
+    if match:
+        ip_address = match.group(1)
+        
+        # Count failures per IP
+        if ip_address in failed_logins:
+            failed_logins[ip_address] += 1
+        else:
+            failed_logins[ip_address] = 1
 
-print("--- Security Report ---")
-THRESHOLD = 3 
+print("\n--- 🚨 THREAT INTELLIGENCE REPORT 🚨 ---")
+
+#  Only track hackers who tried to break in 10 or more times
+THRESHOLD = 10 
 
 for ip, count in failed_logins.items():
     if count >= THRESHOLD:
-        print(f"🚨 ALERT: Brute-force detected from IP {ip} ({count} failed attempts)")
-    else:
-        print(f"✅ IP {ip} had {count} failed attempt(s) (Under threshold)")
+        print(f"\n[!] Heavy Brute-Force Detected: {ip} ({count} failed attempts)")
+        
+        #OSINT Tracker (Where is the hacker located?)
+        try:
+            geo_data = requests.get(f"http://ip-api.com/json/{ip}").json()
+            if geo_data['status'] == 'success':
+                print(f"    -> Location: {geo_data['city']}, {geo_data['country']}")
+                print(f"    -> ISP/Host: {geo_data['isp']}")
+            else:
+                print("    -> Location details hidden/unknown")
+        except:
+            print("    -> Threat tracking offline.")
 
-# --- NEW: Export to CSV ---
-print("\nExporting findings to CSV...")
-
-with open("security_report.csv", "w", newline="") as csv_file:
-    # Set up  CSV writer
-    writer = csv.writer(csv_file)
-    
-    # Write the header row
-    writer.writerow(["IP Address", "Failed Attempts", "Threat Level"])
-    
-    # Loop through our dictionary again and save each IP into the file
-    for ip, count in failed_logins.items():
-        if count >= THRESHOLD:
-            writer.writerow([ip, count, "Suspicious"])
-        else:
-            writer.writerow([ip, count, "Normal"])
-
-print("Successfully saved to 'security_report.csv'!")
+print("\nReport generation complete.")
