@@ -2,27 +2,36 @@ import re
 
 print("--- Log Analysis Started ---\n")
 
-# THE REGEX PATTERN:
-# \d{1,3} look for 1 to 3 numbers
-# \.  look for a literal dot
-# \s+ look for spaces
-# (SUCCESS|FAILED) look for either of these exact words
 log_pattern = r"(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})\s+(SUCCESS|FAILED)"
 
-# Open log file in read
+# A dictionary to keep track of failed logins per IP
+failed_logins = {}
+
 with open("server.log", "r") as file:
-    
-    # Read the file 
     for line in file:
-        
-        # Check if the line matches our Regex pattern
         match = re.search(log_pattern, line)
         
         if match:
-            # group(1) pulls out the first thing in parentheses (the IP)
             ip_address = match.group(1)
-            # group(2) pulls out the second thing in parentheses (the Status)
             status = match.group(2)
             
-            # The :<15 adds padding so the columns line up perfectly
-            print(f"Found event -> IP: {ip_address:<15} | Status: {status}")
+            # If the login failed, add it to our tracking dictionary
+            if status == "FAILED":
+                if ip_address in failed_logins:
+                    failed_logins[ip_address] += 1
+                else:
+                    failed_logins[ip_address] = 1
+
+# Security Logic 
+print("--- Security Report ---")
+
+# If an IP fails 3 or more times, flag it as a brute-force attack
+THRESHOLD = 3 
+
+for ip, count in failed_logins.items():
+    if count >= THRESHOLD:
+        print(f"🚨 ALERT: Brute-force detected from IP {ip} ({count} failed attempts)")
+    else:
+        print(f"✅ IP {ip} had {count} failed attempt(s) (Under threshold)")
+
+print("\nAnalysis complete.")
