@@ -1,4 +1,4 @@
-# SOC Threat Intelligence Platform 🛡️
+# SOC Threat Intelligence Platform 
 
 An advanced Python-based cybersecurity tool that downloads real server logs, parses them for brute-force attacks, tracks the physical location of threat actors using live OSINT geolocation, and generates interactive threat maps and automated firewall remediation scripts.
 
